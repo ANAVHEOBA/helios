@@ -23,7 +23,9 @@ where
     p.expect(SyntaxKind::Sym_Eq, SyntaxKind::Dec_GlobalBinding);
 
     expr::expr(p, 0);
-    p.expect(SyntaxKind::Newline, SyntaxKind::Dec_GlobalBinding);
+    // Note: Newline is treated as trivia (skipped by the parser), so we don't
+    // explicitly expect it here. The Newline token will be attached as trailing
+    // trivia to the expression by the Sink.
 
     m.complete(p, SyntaxKind::Dec_GlobalBinding)
 }
