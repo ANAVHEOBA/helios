@@ -84,6 +84,7 @@ const LHS_KINDS: &[SyntaxKind] = &[
     SyntaxKind::Lit_String,
     SyntaxKind::Identifier,
     SyntaxKind::Sym_LParen,
+    SyntaxKind::Indent,
 ];
 
 /// Parses the left-hand side of an expression.
@@ -423,12 +424,32 @@ mod tests {
     }
 
     #[test]
-    fn test() {
-        let source = "
+    fn test_parse_indented_continuation() {
+        check(
+            "
 1 + 1 +
-    10";
-        let tree = crate::parse(0, source);
-        println!("{}", tree.debug_tree());
+    10",
+            expect![[r#"
+                Root@0..15
+                  Newline@0..1 "\n"
+                  Exp_Binary@1..15
+                    Exp_Binary@1..7
+                      Exp_Literal@1..3
+                        Lit_Integer@1..2 "1"
+                        Whitespace@2..3 " "
+                      Sym_Plus@3..4 "+"
+                      Whitespace@4..5 " "
+                      Exp_Literal@5..7
+                        Lit_Integer@5..6 "1"
+                        Whitespace@6..7 " "
+                    Sym_Plus@7..8 "+"
+                    Exp_Indented@8..15
+                      Indent@8..13 "\n    "
+                      Exp_Literal@13..15
+                        Lit_Integer@13..15 "10"
+                      Dedent@15..15 ""
+            "#]],
+        );
     }
 
     //     #[test]
