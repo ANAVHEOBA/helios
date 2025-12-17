@@ -452,36 +452,39 @@ mod tests {
         );
     }
 
-    //     #[test]
-    //     fn test_parse_binary_expression_interspersed_with_comments() {
-    //         check(
-    //             "
-    // 1 +
-    //   1 + # Add one
-    //     10 # Add ten",
-    //             expect![[r##"
-    //                 Root@0..35
-    //                   Newline@0..1 "\n"
-    //                   Exp_Binary@1..35
-    //                     Exp_Binary@1..21
-    //                       Exp_Literal@1..5
-    //                         Lit_Integer@1..2 "1"
-    //                         Indent@2..5 "\n  "
-    //                       Sym_Plus@5..6 "+"
-    //                       Whitespace@6..7 " "
-    //                       Exp_Literal@7..21
-    //                         Lit_Integer@7..8 "1"
-    //                         Whitespace@8..9 " "
-    //                         Comment@9..18 "# Add one"
-    //                         Newline@18..21 "\n  "
-    //                     Sym_Plus@21..22 "+"
-    //                     Whitespace@22..23 " "
-    //                     Exp_Literal@23..35
-    //                       Lit_Integer@23..25 "10"
-    //                       Whitespace@25..26 " "
-    //                       Comment@26..35 "# Add ten"
-    //                       Dedent@35..35 ""
-    //             "##]],
-    //         );
-    //     }
+    #[test]
+    fn test_parse_binary_expression_interspersed_with_comments() {
+        check(
+            "
+1 +
+  1 + # Add one
+    10 # Add ten",
+            expect![[r##"
+                Root@0..37
+                  Newline@0..1 "\n"
+                  Exp_Binary@1..37
+                    Exp_Literal@1..3
+                      Lit_Integer@1..2 "1"
+                      Whitespace@2..3 " "
+                    Sym_Plus@3..4 "+"
+                    Exp_Indented@4..37
+                      Indent@4..7 "\n  "
+                      Exp_Binary@7..37
+                        Exp_Literal@7..9
+                          Lit_Integer@7..8 "1"
+                          Whitespace@8..9 " "
+                        Sym_Plus@9..10 "+"
+                        Whitespace@10..11 " "
+                        Comment@11..20 "# Add one"
+                        Exp_Indented@20..37
+                          Indent@20..25 "\n    "
+                          Exp_Literal@25..37
+                            Lit_Integer@25..27 "10"
+                            Whitespace@27..28 " "
+                            Comment@28..37 "# Add ten"
+                          Dedent@37..37 ""
+                      Dedent@37..37 ""
+            "##]],
+        );
+    }
 }
